@@ -1,0 +1,8 @@
+*~
+*.bak
+*.log
+.DS_Store
+node_modules/
+
+.vscode
+jsconfig.json
