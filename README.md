@@ -6,6 +6,9 @@
 Adds [Pug](https://pugjs.com) v2.x (.pug and .jade files) support to [brunch](http://brunch.io), by
 compiling templates into dynamic javascript modules and static html files.
 
+**NOTE:**
+v2.8.3 has experimental support for source map, you can enable it with the `sourceMap` option.
+
 ## Usage
 
 Install the plugin via npm with `npm install --save pugjs-brunch`.
@@ -43,6 +46,8 @@ The plugin defines this options:
 `preCompile` - When `true`, all the files will be pre-compiled.
 
 `pugRuntime` - Set to `false` if you want to load another runtime.
+
+`sourceMap` - `true` to enable source map support (keep `compileDebug:true` as well).
 
 You can use any [Pug options](https://pugjs.org/api/reference.html) using the `plugins.pug` branch of your brunch-config, the plugin set this:
 

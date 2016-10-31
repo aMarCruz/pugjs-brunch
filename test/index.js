@@ -10,9 +10,9 @@ const fs = require('fs')
 process.chdir(__dirname)
 
 function wrapFunc (tmpl) {
+  if (typeof tmpl != 'string') tmpl = tmpl.data
+
   tmpl = tmpl
-    .replace('function pug_escape(e){', '$&\n')
-    .replace(';function template(locals) {', '\n$&\n')
     .replace(/module\.exports\s*=\s*template\b/, 'return template(_locals)')
     .replace(/module\.exports\s*=\s*/, 'return ')
 
@@ -235,6 +235,7 @@ describe('dependencies', function () {
     const plugin = new Plugin(brunchOpts)
 
     plugin.compile({ data: content, path: filename }).then(function (data) {
+      if (typeof data != 'string') data = data.data
       expect(data).toBeA('string')
 
       plugin.getDependencies(content, filename, function (error, dependencies) {
@@ -257,6 +258,7 @@ describe('dependencies', function () {
     const plugin = new Plugin(brunchOpts)
 
     plugin.compile({ data: content, path: filename }).then(function (data) {
+      if (typeof data != 'string') data = data.data
       expect(data).toBeA('string')
 
       plugin.getDependencies(content, filename, function (error, dependencies) {
@@ -275,6 +277,7 @@ describe('dependencies', function () {
     const plugin = new Plugin(brunchOpts)
 
     plugin.compile({ data: content, path: filename }).then(function (data) {
+      if (typeof data != 'string') data = data.data
       expect(data).toBeA('string')
 
       plugin.getDependencies(content, filename, function (error, dependencies) {
@@ -293,6 +296,7 @@ describe('dependencies', function () {
     const plugin = new Plugin(brunchOpts)
 
     plugin.compile({ data: content, path: filename }).then(function (data) {
+      if (typeof data != 'string') data = data.data
       expect(data).toBeA('string')
 
       plugin.getDependencies(content, filename, function (error, dependencies) {

@@ -1,5 +1,6 @@
 'use strict'
 
+const bundleMap = require('gen-pug-source-map')
 const pug = require('pug')
 const sysPath = require('path')
 
@@ -55,6 +56,9 @@ class PugCompiler {
 
     this.config = config
 
+    // we need compileDebug to generate source map
+    if (!this.config.compileDebug) this.config.sourceMap = false
+
     //if (!this.config.preCompilePattern) this.config.preCompilePattern = PRECOMP
     if (config.staticPattern) this.staticPattern = config.staticPattern
     if (config.pattern) this.pattern = config.pattern
@@ -106,7 +110,13 @@ class PugCompiler {
         const res = pug.compileClientWithDependenciesTracked(data, options)
         this._setDeps(path, res)
 
-        resolve(this._export(path, res.body))
+        let result = this._export(path, res.body)
+
+        if (this.config.sourceMap !== false) {
+          result = bundleMap(path, data, result)
+        }
+
+        resolve(result)
 
       } catch (_error) {
 
@@ -182,6 +192,7 @@ class PugCompiler {
   _export (path, tmpl) {
     return path === null ? `module.exports = ${tmpl};\n` : `${tmpl};\nmodule.exports = template;\n`
   }
+
 }
 
 PugCompiler.prototype.brunchPlugin = true
