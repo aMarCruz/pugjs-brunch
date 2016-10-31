@@ -49,6 +49,7 @@ class PugCompiler {
         staticBasedir: sysPath.join(defaultBasedir, 'assets'),
         inlineRuntimeFunctions: false,
         compileDebug: !brunchConf.optimize,
+        sourceMap: false,
         globals: []
       },
       brunchConf.plugins && brunchConf.plugins.pug

@@ -58,7 +58,7 @@ You can use any [Pug options](https://pugjs.org/api/reference.html) using the `p
   staticBasedir: 'app/assets',
   inlineRuntimeFunctions: false,  // will use the global `pug` variable
   compileDebug: true,             // except for brunch `optimize` mode (production)
-  preCompile: false
+  sourceMap: false
 }
 ```
 
