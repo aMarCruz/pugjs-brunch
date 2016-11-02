@@ -7,7 +7,7 @@ Adds [Pug](https://pugjs.com) v2.x (.pug and .jade files) support to [brunch](ht
 compiling templates into dynamic javascript modules and static html files.
 
 **NOTE:**
-v2.8.3 has experimental support for source map, you can enable it with the `sourceMap` option.
+From v2.8.4, `sourceMap` defaults to the global Brunch option.
 
 ## Usage
 
@@ -47,7 +47,7 @@ The plugin defines this options:
 
 `pugRuntime` - Set to `false` if you want to load another runtime.
 
-`sourceMap` - `true` to enable source map support (keep `compileDebug:true` as well).
+`sourceMap` - Defaults to brunch `sourceMaps` (w/'s') value, `false` disables it.
 
 You can use any [Pug options](https://pugjs.org/api/reference.html) using the `plugins.pug` branch of your brunch-config, the plugin set this:
 
@@ -58,7 +58,7 @@ You can use any [Pug options](https://pugjs.org/api/reference.html) using the `p
   staticBasedir: 'app/assets',
   inlineRuntimeFunctions: false,  // will use the global `pug` variable
   compileDebug: true,             // except for brunch `optimize` mode (production)
-  sourceMap: false
+  sourceMap: true                 // true if Brunch sourceMaps option is enabled
 }
 ```
 

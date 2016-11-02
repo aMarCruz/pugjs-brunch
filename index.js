@@ -1,6 +1,6 @@
 'use strict'
 
-const bundleMap = require('gen-pug-source-map')
+const genPugSourceMap = require('gen-pug-source-map')
 const pug = require('pug')
 const sysPath = require('path')
 
@@ -49,16 +49,13 @@ class PugCompiler {
         staticBasedir: sysPath.join(defaultBasedir, 'assets'),
         inlineRuntimeFunctions: false,
         compileDebug: !brunchConf.optimize,
-        sourceMap: false,
+        sourceMap: !!brunchConf.sourceMaps,
         globals: []
       },
       brunchConf.plugins && brunchConf.plugins.pug
     )
 
     this.config = config
-
-    // we need compileDebug to generate source map
-    if (!this.config.compileDebug) this.config.sourceMap = false
 
     //if (!this.config.preCompilePattern) this.config.preCompilePattern = PRECOMP
     if (config.staticPattern) this.staticPattern = config.staticPattern
@@ -102,19 +99,26 @@ class PugCompiler {
       )
     }
 
-    // cloning options is mandatory because Pug changes it
-    const options = cloneProps(this.config, PUGPROPS)
-    options.filename = path
-
     return new Promise((resolve, reject) => {
+
+      // cloning options is mandatory because Pug changes it
+      const options = cloneProps(this.config, PUGPROPS)
+      options.filename = path
+
       try {
+        const dbg = options.compileDebug
+        if (this.config.sourceMap) options.compileDebug = true
+
         const res = pug.compileClientWithDependenciesTracked(data, options)
         this._setDeps(path, res)
 
         let result = this._export(path, res.body)
 
-        if (this.config.sourceMap !== false) {
-          result = bundleMap(path, data, result)
+        if (this.config.sourceMap) {
+          result = genPugSourceMap(path, result, {
+            basedir: options.basedir,
+            keepDebugLines: dbg
+          })
         }
 
         resolve(result)
