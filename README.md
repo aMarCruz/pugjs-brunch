@@ -1,3 +1,5 @@
+[![Windows build][wbuild-image]][wbuild-url]
+[![Build Status][build-image]][build-url]
 [![npm Version][npm-image]][npm-url]
 [![License][license-image]][license-url]
 
@@ -20,7 +22,7 @@ See previous changes in the [CHANGELOG](https://github.com/aMarCruz/pugjs-brunch
 npm install pugjs-brunch --save-dev
 ```
 
-or through `package.json`:
+or through `devDependencies` in `package.json`:
 
 ```js
     ...
@@ -124,3 +126,8 @@ The [MIT License](LICENCE) (MIT)
 [npm-url]:        https://www.npmjs.com/package/pugjs-brunch
 [license-image]:  https://img.shields.io/npm/l/express.svg
 [license-url]:    https://github.com/aMarCruz/pugjs-brunch/blob/master/LICENSE
+
+[build-image]:    https://img.shields.io/travis/aMarCruz/pugjs-brunch.svg
+[build-url]:      https://travis-ci.org/aMarCruz/pugjs-brunch
+[wbuild-image]:   https://ci.appveyor.com/api/projects/status/3www03fp83018461?svg=true
+[wbuild-url]:     https://ci.appveyor.com/project/aMarCruz/pugjs-brunch

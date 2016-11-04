@@ -2,8 +2,8 @@
 
 const flattenBrunchMap = require('flatten-brunch-map')
 const genPugSourceMap = require('gen-pug-source-map')
-const pug = require('pug')
 const sysPath = require('path')
+const pug = require('pug')
 
 //const PRECOMP = /\.static\.(?:jade|pug)$/
 
