@@ -1,5 +1,9 @@
 # Changes for pugjs-brunch
 
+### 2016-11-03 v2.8.6
+
+- Fix build & test issues in node 4 & 5 by using strict mode.
+
 ### 2016-11-03 v2.8.5
 
 - Source maps are flatten if any previous exists. That allows, by example, to use [jscc-brunch](https://www.npmjs.com/package/jscc-brunch) in Pug templates with both `sourceMap` options enabled.

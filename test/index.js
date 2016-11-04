@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 /* eslint prefer-arrow-callback:0, prefer-template:0, no-console:0, no-debugger:0, no-eval:0, no-unused-expressions:0 */
+'use strict'
 
 const expect = require('expect')
 const Plugin = require('../')
