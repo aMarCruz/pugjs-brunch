@@ -1,5 +1,6 @@
 'use strict'
 
+const flattenBrunchMap = require('flatten-brunch-map')
 const genPugSourceMap = require('gen-pug-source-map')
 const pug = require('pug')
 const sysPath = require('path')
@@ -47,6 +48,7 @@ class PugCompiler {
         doctype: 'html',
         basedir: defaultBasedir,
         staticBasedir: sysPath.join(defaultBasedir, 'assets'),
+        staticPretty: true,
         inlineRuntimeFunctions: false,
         compileDebug: !brunchConf.optimize,
         sourceMap: !!brunchConf.sourceMaps,
@@ -73,7 +75,6 @@ class PugCompiler {
 
     if (config.preCompile) {
       config.pugRuntime = false
-      config.inlineRuntimeFunctions = false
     }
     if (config.pugRuntime !== false && !config.inlineRuntimeFunctions) {
       this._addRuntime(config.pugRuntime)
@@ -115,10 +116,11 @@ class PugCompiler {
         let result = this._export(path, res.body)
 
         if (this.config.sourceMap) {
-          result = genPugSourceMap(path, result, {
+          const duple = genPugSourceMap(path, result, {
             basedir: options.basedir,
             keepDebugLines: dbg
           })
+          result = flattenBrunchMap(params, duple.data, duple.map)
         }
 
         resolve(result)
@@ -135,11 +137,11 @@ class PugCompiler {
       params.data,
       params.path,
       this.config,
-      this.config.staticBasedir
+      true
     )
   }
 
-  _precompile (data, path, config, basedir) {
+  _precompile (data, path, config, asset) {
     const locals  = dup(config.locals)
     const options = cloneProps(config, PUGPROPS)
 
@@ -151,14 +153,17 @@ class PugCompiler {
                      : path.slice(options.basedir.length + 1)
 
     // now we can set the staticBasedir
-    if (basedir) options.basedir = basedir
+    if (asset) {
+      options.basedir = config.staticBasedir
+      options.pretty  = 'staticPretty' in config ? config.staticPretty : config.pretty
+    }
 
     return new Promise((resolve, reject) => {
       try {
         const fn = pug.compile(data, options)
         let html = fn(locals)
 
-        if (!basedir) {
+        if (!asset) {
           html = this._export(null, JSON.stringify(html))
         }
         this._setDeps(path, fn)

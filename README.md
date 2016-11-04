@@ -3,30 +3,35 @@
 
 ## pugjs-brunch
 
-Adds [Pug](https://pugjs.com) v2.x (.pug and .jade files) support to [brunch](http://brunch.io), by
-compiling templates into dynamic javascript modules and static html files.
+Adds [Pug](https://pugjs.com) v2.x (.pug and .jade files) support to [Brunch](http://brunch.io), by
+compiling templates into dynamic JavaScript modules with sourceMap and static HTML files.
 
-**NOTE:**
-From v2.8.4, `sourceMap` defaults to the global Brunch option.
+**What's New**
 
-## Usage
+- Source maps are flatten if any previous exists. That allows, by example, to use [jscc-brunch](https://www.npmjs.com/package/jscc-brunch) in Pug templates with both `sourceMap` options enabled.
+- New `staticPretty` option that set Pug's `pretty` option for files in `staticBasedir`, usually your `app/assets` directory.
 
-Install the plugin via npm with `npm install --save pugjs-brunch`.
+See previous changes in the [CHANGELOG](https://github.com/aMarCruz/pugjs-brunch/blob/master/CHANGELOG.md).
 
-Or, do manual install:
 
-* Add `"pugjs-brunch": "x.y.z"` to `package.json` of your brunch app.
-  Pick a plugin version that corresponds to your minor (y) brunch version.
-* If you want to use git version of plugin, add
-`"pugjs-brunch": "git+ssh://git@github.com:aMarCruz/pugjs-brunch.git"`.
+## Install
 
-You can also use `pugjs-brunch` to compile pug/jade into html. Just place your files into `app/assets`.
+```bash
+npm install pugjs-brunch --save-dev
+```
 
-## Assumptions
+or through `package.json`:
 
-When using Pug's basedir relative `include` and `extend`, the basedir will be assumed to be 'app' within the Brunch root. See [#989](https://github.com/visionmedia/jade/pull/989)
+```js
+    ...
+    "pugjs-brunch": "^2.8.5",
+// or, if you want to use git version of plugin:
+    "pugjs-brunch": "aMarCruz/pugjs-brunch",
+    ...
+```
 
-For pug files in `app/assets`, the basedir will be assumed to be `app/assets`.
+To compile pug/jade into plain HTML, just place your files into `staticBasedir` (usually your `app/assets` directory).
+
 
 ## The runtime
 
@@ -37,34 +42,42 @@ If required, the plugin loads the runtime from its own directory, so you don't h
 
 ## Options
 
-The plugin defines this options:
+The plugin uses the `plugins.pug` section of your brunch-config and defines this options:
 
 `locals` - Plain JavaScript object passed to Pug in static compilation.
 
 `staticBasedir` - Files in this folder will output raw html.
 
+`staticPretty` - Pug's `pretty` option for files in `staticBasedir` (v2.8.5).
+
 `preCompile` - When `true`, all the files will be pre-compiled.
 
 `pugRuntime` - Set to `false` if you want to load another runtime.
 
-`sourceMap` - Defaults to brunch `sourceMaps` (w/'s') value, `false` disables it.
+`sourceMap` - Defaults to brunch `sourceMaps` (with 's') value, `false` disables it (v2.8.4).
 
-You can use any [Pug options](https://pugjs.org/api/reference.html) using the `plugins.pug` branch of your brunch-config, the plugin set this:
+You can use any [Pug options](https://pugjs.org/api/reference.html) as well, pugjs-brunch set this:
 
 ```js
 {
   doctype: 'html',
-  basedir: 'app',
-  staticBasedir: 'app/assets',
+  basedir: 'app',                 // or wherever Brunch config says
+  staticBasedir: 'app/assets',    // or wherever Brunch config says
+  staticPretty: true,             // "pretty" for files in staticBasedir
   inlineRuntimeFunctions: false,  // will use the global `pug` variable
   compileDebug: true,             // except for brunch `optimize` mode (production)
-  sourceMap: true                 // true if Brunch sourceMaps option is enabled
+  sourceMap: true                 // ...if Brunch sourceMaps option is enabled
 }
 ```
 
+**NOTE**
+
+For files in `staticBasedir`, the basedir for `include` and `extends` will be assumed to be `staticBasedir`.
+
 The options `pretty` and `compileDebug` are forced to `false` in production mode.
 
-### Example
+
+### Examples
 
 ```js
   ...
@@ -73,7 +86,30 @@ The options `pretty` and `compileDebug` are forced to `false` in production mode
       pretty: true,
       locals: {
         appName: 'My App',
-      }
+      },
+      globals: ['App']
+    }
+  }
+  ...
+```
+
+Using with [jscc-brunch](https://www.npmjs.com/package/jscc-brunch)...
+
+```js
+  ...
+  plugins: {
+    jscc: {
+      values: {
+        _APP: 'My App'  // $_APP can do static replacement
+      },
+      pattern: /\.(?:js|pug)$/,
+      sourceMapFor: /\.(?:js|pug)$/
+    },
+    pug: {
+      locals: {
+        appName: 'My App',
+      },
+      globals: ['App']
     }
   }
   ...
