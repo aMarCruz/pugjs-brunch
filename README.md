@@ -103,7 +103,8 @@ Using with [jscc-brunch](https://www.npmjs.com/package/jscc-brunch)...
         _APP: 'My App'  // $_APP can do static replacement
       },
       pattern: /\.(?:js|pug)$/,
-      sourceMapFor: /\.(?:js|pug)$/
+      sourceMapFor: /\.(?:js|pug)$/,
+      sourceMap: true
     },
     pug: {
       locals: {
