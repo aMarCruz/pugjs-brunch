@@ -34,7 +34,7 @@ or through `devDependencies` in `package.json`:
 
 ```js
     ...
-    "pugjs-brunch": "^2.8.5",
+    "pugjs-brunch": "^2.8.6",
 // or, if you want to use git version of plugin:
     "pugjs-brunch": "aMarCruz/pugjs-brunch",
     ...
@@ -45,8 +45,7 @@ To compile pug into static, plain HTML, just place your files into the Brunch `a
 
 ## The runtime
 
-For modules, unless the `inlineRuntimeFunctions` option is set to `true`, it is neccesary the Pug runtime,
-a small set of function that lives in the global variable `pug`.
+For modules, unless the `inlineRuntimeFunctions` option is set to `true` (not recommended), it is neccesary the Pug runtime, a small set of function that lives in the global variable `pug`.
 
 If required, the plugin loads the runtime from its own directory, so you don't have to worry about this.
 
@@ -62,7 +61,7 @@ The plugin uses the `plugins.pug` section of your brunch-config and defines this
 
 `preCompile` - When `true`, all the files will be pre-compiled.
 
-`preCompilePattern` - Regex: when `preCompile=true`, limit pre-compilation to matching files.
+`preCompilePattern` - Regex: when `preCompile:true`, limit pre-compilation to matching files (v2.8.6).
 
 `pugRuntime` - Set to `false` if you want to load another runtime.
 
