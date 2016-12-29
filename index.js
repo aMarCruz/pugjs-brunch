@@ -59,12 +59,7 @@ class PugCompiler {
 
     this.config = config
 
-    //if (!this.config.preCompilePattern) this.config.preCompilePattern = PRECOMP
-    if (config.staticPattern) this.staticPattern = config.staticPattern
     if (config.pattern) this.pattern = config.pattern
-
-    // globals in defaults is an empty array, but user can overwrite this.
-    if (config.globals) config.globals.push('require')
 
     // The runtime can be excluded by setting pugRuntime:false
     if ('noRuntime' in config) {
@@ -73,7 +68,7 @@ class PugCompiler {
       if (config.noRuntime) config.pugRuntime = false
     }
 
-    if (config.preCompile) {
+    if (config.preCompile && !config.preCompilePattern) {
       config.pugRuntime = false
     }
     if (config.pugRuntime !== false && !config.inlineRuntimeFunctions) {
@@ -92,7 +87,9 @@ class PugCompiler {
     const data = params.data
     const path = params.path
 
-    if (this.config.preCompile === true/* || this.config.preCompilePattern.test(path)*/) {
+    if (this.config.preCompile &&
+      (!this.config.preCompilePattern || this.config.preCompilePattern.test(path))
+     ) {
       return this._precompile(
         data,
         path,
@@ -148,11 +145,10 @@ class PugCompiler {
     // by no inlining functions, pug uses own `require('pug-runtime')`
     options.inlineRuntimeFunctions = false
 
-    // set options.filename to the filename, but relative to basedir
-    options.filename = path.indexOf(options.basedir) ? path
-                     : path.slice(options.basedir.length + 1)
+    // set options.filename to the filename, but relative to Brunch root
+    options.filename = path
 
-    // now we can set the staticBasedir
+    // now set the staticBasedir only for assets (static html files)
     if (asset) {
       options.basedir = config.staticBasedir
       options.pretty  = 'staticPretty' in config ? config.staticPretty : config.pretty
@@ -179,11 +175,11 @@ class PugCompiler {
 
   _setDeps (path, res) {
     const src = res.dependencies
-    let deps = []
-    if (src.length > 1) {
-      deps = src.filter((dep) => deps.indexOf(dep) < 0 && !!deps.push(dep))
+    if (src && src.length) {
+      const deps = []
+      src.forEach(dep => { if (deps.indexOf(dep) < 0) deps.push(dep) })
+      this._depcache[path] = deps
     }
-    this._depcache[path] = deps
   }
 
   _addRuntime (path) {

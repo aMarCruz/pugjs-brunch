@@ -8,10 +8,18 @@
 Adds [Pug](https://pugjs.com) v2.x (.pug and .jade files) support to [Brunch](http://brunch.io), by
 compiling templates into dynamic JavaScript modules with sourceMap and static HTML files.
 
+
+## Three output types:
+
+- Dynamic: Parameterized function that creates HTML at runtime based on the received parameters.
+- Precompiled: Function wich return raw HTML string with minimum overhead at runtime.
+- Static: Generates plain HTML files from the pug files in the `assets` directory.
+
 **What's New**
 
+- `preCompilePattern` option to limit the pre-compilation to matching files (use with `preCompile:true`).
 - Source maps are flatten if any previous exists. That allows, by example, to use [jscc-brunch](https://www.npmjs.com/package/jscc-brunch) in Pug templates with both `sourceMap` options enabled.
-- New `staticPretty` option that set Pug's `pretty` option for files in `staticBasedir`, usually your `app/assets` directory.
+- New `staticPretty` option that set Pug's `pretty` option for files in `assets` directory.
 
 See previous changes in the [CHANGELOG](https://github.com/aMarCruz/pugjs-brunch/blob/master/CHANGELOG.md).
 
@@ -32,7 +40,7 @@ or through `devDependencies` in `package.json`:
     ...
 ```
 
-To compile pug/jade into plain HTML, just place your files into `staticBasedir` (usually your `app/assets` directory).
+To compile pug into static, plain HTML, just place your files into the Brunch `assets` directory (usually `app/assets`).
 
 
 ## The runtime
@@ -48,11 +56,13 @@ The plugin uses the `plugins.pug` section of your brunch-config and defines this
 
 `locals` - Plain JavaScript object passed to Pug in static compilation.
 
-`staticBasedir` - Files in this folder will output raw html.
+`staticBasedir` - Brunch `convention.assets` folder as **string**. This is the root of static templates.
 
 `staticPretty` - Pug's `pretty` option for files in `staticBasedir` (v2.8.5).
 
 `preCompile` - When `true`, all the files will be pre-compiled.
+
+`preCompilePattern` - Regex: when `preCompile=true`, limit pre-compilation to matching files.
 
 `pugRuntime` - Set to `false` if you want to load another runtime.
 
@@ -64,7 +74,7 @@ You can use any [Pug options](https://pugjs.org/api/reference.html) as well, pug
 {
   doctype: 'html',
   basedir: 'app',                 // or wherever Brunch config says
-  staticBasedir: 'app/assets',    // or wherever Brunch config says
+  staticBasedir: 'app/assets',    // basedir for static compilation (see bellow)
   staticPretty: true,             // "pretty" for files in staticBasedir
   inlineRuntimeFunctions: false,  // will use the global `pug` variable
   compileDebug: true,             // except for brunch `optimize` mode (production)
@@ -72,9 +82,12 @@ You can use any [Pug options](https://pugjs.org/api/reference.html) as well, pug
 }
 ```
 
-**NOTE**
+### About `staticBasedir`:
 
-For files in `staticBasedir`, the basedir for `include` and `extends` will be assumed to be `staticBasedir`.
+This option is only meaningful if you changed the default value of the `conventions.assets` Brunch option and you are using absolute paths in includes or extends. This value will be pass to Pug as `basedir` when compiling static assets as html (see the [pug options](https://pugjs.org/api/reference.html#options)).
+
+
+**NOTE**
 
 The options `pretty` and `compileDebug` are forced to `false` in production mode.
 

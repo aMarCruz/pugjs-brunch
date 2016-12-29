@@ -1,6 +1,6 @@
 {
   "name": "pugjs-brunch",
-  "version": "2.8.5",
+  "version": "2.8.6",
   "description": "Adds Pug (aka Jade) support to brunch.",
   "author": "aMarCruz <amarcruzbox-git@yahoo.com>",
   "license": "MIT",
@@ -30,14 +30,14 @@
     "prepublish": "npm run build && npm test"
   },
   "dependencies": {
-    "flatten-brunch-map": "^2.8.0",
-    "gen-pug-source-map": "^0.1.1",
+    "flatten-brunch-map": "^2.8.1",
+    "gen-pug-source-map": "^0.1.2",
     "pug": "^2.0.0-beta6"
   },
   "devDependencies": {
-    "eslint": "^3.9.0",
+    "eslint": "^3.12.2",
     "expect": "^1.20.2",
-    "mocha": "^3.1.2",
+    "mocha": "^3.2.0",
     "pug-runtime": "^2.0.2"
   }
 }
