@@ -68,7 +68,7 @@ class PugCompiler {
       if (config.noRuntime) config.pugRuntime = false
     }
 
-    if (config.preCompile) {
+    if (config.preCompile && !config.preCompilePattern) {
       config.pugRuntime = false
     }
     if (config.pugRuntime !== false && !config.inlineRuntimeFunctions) {
@@ -175,11 +175,11 @@ class PugCompiler {
 
   _setDeps (path, res) {
     const src = res.dependencies
-    let deps = []
-    if (src.length > 1) {
-      deps = src.filter((dep) => deps.indexOf(dep) < 0 && !!deps.push(dep))
+    if (src && src.length) {
+      const deps = []
+      src.forEach(dep => { if (deps.indexOf(dep) < 0) deps.push(dep) })
+      this._depcache[path] = deps
     }
-    this._depcache[path] = deps
   }
 
   _addRuntime (path) {
