@@ -51,11 +51,18 @@ class PugCompiler {
         staticPretty: true,
         inlineRuntimeFunctions: false,
         compileDebug: !brunchConf.optimize,
-        sourceMap: !!brunchConf.sourceMaps,
-        globals: []
+        sourceMap: !!brunchConf.sourceMaps
       },
       brunchConf.plugins && brunchConf.plugins.pug
     )
+
+    // v2.8.7 add default globals to the user defined set
+    const globals = ['require', 'String', 'Number', 'Boolean', 'Date', 'Array', 'Function', 'Math', 'RegExp']
+
+    if (config.globals) {
+      config.globals.forEach(g => { if (globals.indexOf(g) < 0) globals.push(g) })
+    }
+    config.globals = globals
 
     this.config = config
 
@@ -68,14 +75,30 @@ class PugCompiler {
       if (config.noRuntime) config.pugRuntime = false
     }
 
-    if (config.preCompile && !config.preCompilePattern) {
+    if (config.preCompile && !config.preCompilePattern || config.inlineRuntimeFunctions) {
       config.pugRuntime = false
-    }
-    if (config.pugRuntime !== false && !config.inlineRuntimeFunctions) {
-      this._addRuntime(config.pugRuntime)
     }
 
     this._depcache = []
+  }
+
+  get include () {
+    let runtime = this.config.pugRuntime
+
+    if (runtime !== false && !(runtime && typeof runtime == 'string')) {
+      //
+      // Ok this is not pretty, but seems to work with brunch 2.9.x and 2.10.x
+      // node returns the real path of sym-linked modules so brunch can wrap
+      // the runtime. path.resolve() works as expected under Linux in regular
+      // conditions (hope in Windows as well).
+      //
+      let base = __dirname
+      if (base.indexOf('node_modules') < 0) {   // must be a symlink
+        base = sysPath.resolve('node_modules', sysPath.basename(base))
+      }
+      runtime = sysPath.resolve(base, 'vendor', 'pug_runtime.js')
+    }
+    return runtime ? [runtime] : []
   }
 
   getDependencies (data, path, cb) {
@@ -179,19 +202,6 @@ class PugCompiler {
       const deps = []
       src.forEach(dep => { if (deps.indexOf(dep) < 0) deps.push(dep) })
       this._depcache[path] = deps
-    }
-  }
-
-  _addRuntime (path) {
-    if (!path) {
-      path = './runtime.js'
-    } else if (path[0] === '.') {
-      path = sysPath.resolve('.', path)
-    }
-    try {
-      this.include = [require.resolve(path)]
-    } catch (e) {
-      throw e
     }
   }
 

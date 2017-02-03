@@ -1,5 +1,13 @@
 # Changes for pugjs-brunch
 
+### 2017-02-02 v2.9.0
+- Supports Brunch v2.9.x and v2.10.x
+- Using Pug v2.0.0-beta10 which fix some bugs and has better error reporting.
+- New logic to load the custom runtime. It does not overwrites an existing "pug" object and uses `module.exports` if exists in the context. Also try to work with symlinks.
+- JS natives `String`, `Number`, `Boolean`, `Date`, `Array`, `Function`, `Math`, `RegExp`, and the scoped `require` are included in `globals[]`, in addition to your own names.
+- Requires node.js v4.2 or above.
+- Updated devDependencies.
+
 ### 2016-12-28 v2.8.6
 - `preCompilePattern` option to limit the pre-compilation to matching files (use with `preCompile:true`).
 - Fix [#2](https://github.com/aMarCruz/pugjs-brunch/issues/2) : wrong directory for includes?

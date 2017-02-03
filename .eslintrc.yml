@@ -86,11 +86,6 @@ rules:
   wrap-iife: [2, "inside"]      # require immediate function invocation to be wrapped in parentheses
   yoda: [2, "never"]            # require or disallow Yoda conditions
   #
-  #   STRICT MODE
-  #
-  #strict: [2, "global"]        # require run in strict mode
-  #strict: 2                    # require strict mode
-  #
   #   VARIABLES
   #
   no-catch-shadow: 2              # disallow the catch clause parameter shadows an existing variable
@@ -188,5 +183,4 @@ rules:
   prefer-const:
     - 2
     - destructuring: "all"
-  prefer-template: 2
   template-curly-spacing: 2

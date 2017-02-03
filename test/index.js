@@ -1,10 +1,10 @@
 /* eslint-env mocha */
-/* eslint prefer-arrow-callback:0, prefer-template:0, no-console:0, no-debugger:0, no-eval:0, no-unused-expressions:0 */
+/* eslint prefer-arrow-callback:0, no-console:0, no-debugger:0, no-eval:0, no-unused-expressions:0 */
+/* global window:false */
 'use strict'
 
 const expect = require('expect')
 const Plugin = require('../')
-//const pug = require('pug');
 const sysPath = require('path')
 const fs = require('fs')
 
@@ -90,37 +90,45 @@ describe('runtime', function () {
 
   it('with the default options should include the runtime', function () {
     const plugin = new Plugin(brunchOpts)
-    expect(plugin.include).toExist()
+    expect(plugin.include[0]).toContain('runtime')
   })
 
   it('`pugRuntime:false` should exclude the runtime regardless other options', function () {
     brunchOpts.plugins.pug.pugRuntime = false
     const plugin = new Plugin(brunchOpts)
-    expect(plugin.include).toNotExist()
+    expect(plugin.include[0]).toNotExist()
   })
 
   it('explicit `inlineRuntimeFunctions:true` excludes the runtime', function () {
     brunchOpts.plugins.pug.inlineRuntimeFunctions = true
     const plugin = new Plugin(brunchOpts)
-    expect(plugin.include).toNotExist()
+    expect(plugin.include[0]).toNotExist()
   })
 
   it('setting `preCompile:true` also excludes the runtime', function () {
     brunchOpts.plugins.pug.preCompile = true
     const plugin = new Plugin(brunchOpts)
-    expect(plugin.include).toNotExist()
+    expect(plugin.include[0]).toNotExist()
   })
 
-  it('when included, the runtime.js file should exist', function () {
+  /* @TODO test in subdir
+  it('when included, the runtime file should exist', function () {
     brunchOpts.plugins.pug.inlineRuntimeFunctions = false
     const plugin = new Plugin(brunchOpts)
-    expect(fs.existsSync(plugin.include[0])).toExist()
-  })
+    const exists = plugin.include[0] && fs.existsSync(plugin.include[0])
+    expect(exists).toBe(true, `The runtime in "${plugin.include[0]}" does not exists!`)
+  })*/
 
   it('`noRuntime:true` to exclude the runtime is DEPRECATED', function () {
     brunchOpts.plugins.pug.noRuntime = true
     const plugin = new Plugin(brunchOpts)
-    expect(plugin.include).toNotExist()
+    expect(plugin.include[0]).toNotExist()
+  })
+
+  it('does not overwrites custom runtime path', function () {
+    brunchOpts.plugins.pug.pugRuntime = './lib/custom.js'
+    const plugin = new Plugin(brunchOpts)
+    expect(plugin.include[0]).toContain('custom.js')
   })
 
 })
@@ -132,10 +140,11 @@ describe('compilation', function () {
   }
 
   beforeEach(function () {
+    delete (typeof window != 'undefined' ? window : global).pug
     brunchOpts.plugins.pug = {}
   })
 
-  it('generates raw html with the `preCompile:true` option', function (done) {
+  it('generates raw html export with the `preCompile:true` option', function (done) {
     brunchOpts.plugins.pug.preCompile = true
     brunchOpts.plugins.pug.locals = { name: 'John Doe' }
     const content = 'p= name'
@@ -151,21 +160,35 @@ describe('compilation', function () {
       .catch(done)
   })
 
-  /*
-  it('generates raw html for names ending in `static.pug`', function (done) {
+  it('generates raw html export only for given regex, ex: `/\.html\.pug$/`', function (done) {
+    brunchOpts.plugins.pug.preCompile = true
+    brunchOpts.plugins.pug.preCompilePattern = /\.html\.pug$/
     brunchOpts.plugins.pug.locals = { name: 'John Doe' }
     const content = 'p= name'
     const plugin = new Plugin(brunchOpts)
 
-    plugin.compile({ data: content, path: 'template.static.pug' })
+    plugin.compile({ data: content, path: 'template.html.pug' })
       .then(function (data) {
         const fn = wrapFunc(data)
         const html = fn()
         expect(html.trim()).toBe('<p>John Doe</p>')
+      })
+      .catch(done)
+
+    plugin.compile({ data: content, path: 'template.xhtml.pug' })
+      .then(function (data) {
+        expect(data).toContain('template')
+        expect(data).toNotContain('John Doe')
+
+        ;(typeof window != 'undefined' ? window : global).pug = require('../vendor/pug_runtime')
+
+        const fn = wrapFunc(data)
+        const html = fn()
+        expect(html.trim()).toBe('<p></p>')
         done()
       })
       .catch(done)
-  })*/
+  })
 
   it('generates unwrapped raw html for the `asset` directory', function (done) {
     brunchOpts.plugins.pug.locals = { name: 'John Doe' }
@@ -181,8 +204,7 @@ describe('compilation', function () {
       .catch(done)
   })
 
-  it('should work with preloaded runtime (global `pug` variable)', function (done) {
-
+  it('should work with the preloaded runtime (global `pug` variable)', function (done) {
     brunchOpts.plugins.pug.pugRuntime = false
     brunchOpts.plugins.pug.inlineRuntimeFunctions = false
 
@@ -190,7 +212,7 @@ describe('compilation', function () {
     const content = 'p= name'
     const plugin  = new Plugin(brunchOpts)
 
-    require('../runtime')
+    ;(typeof window != 'undefined' ? window : global).pug = require('../vendor/pug_runtime')
 
     plugin.compile({ data: content, path: 'template.pug' })
       .then(function (data) {
