@@ -16,7 +16,7 @@ This plugin compiles templates into any of three types:
 **What's New**
 
 - Supports Brunch v2.9.x and v2.10.x
-- Using Pug v2.0.0-beta10 which fix some bugs and has better error reporting.
+- Using Pug v2.0.0-beta11.
 - New logic to load the custom runtime. It does not overwrite an existing "pug" object.
 - JS natives `String`, `Number`, `Boolean`, `Date`, `Array`, `Function`, `Math`, `RegExp`, and the scoped `require` are included in `globals[]`, in addition to your own names.
 - Requires node.js v4.2 or above.
@@ -34,7 +34,7 @@ or through `devDependencies` in `package.json`:
 
 ```js
     ...
-    "pugjs-brunch": "^2.8.7",
+    "pugjs-brunch": "^2.10.0",
 // or, if you want to use the git version of this plugin:
     "pugjs-brunch": "aMarCruz/pugjs-brunch",
     ...
@@ -51,7 +51,7 @@ If required, the plugin loads a custom runtime from its own directory, so you do
 
 **NOTE:**
 
-Under certain circumstances the runtime load may fail. If this happens to you, move `pug_runtime.js` from node_modules/pugjs-brunch/vendor to your `vendor` folder and pass its fullname in the `pugRuntime` option to the plugin.
+Under certain circumstances the runtime load may fail. If this happens to you, move `pug_runtime.js` from `node_modules/pugjs-brunch/vendor` to your `vendor` folder and pass its fullname in the `pugRuntime` option to the plugin.
 
 Example:
 ```js
@@ -64,7 +64,7 @@ Example:
 
 The plugin uses the `plugins.pug` section of your brunch-config and defines this options:
 
-`locals` - Plain JavaScript object passed to Pug in static compilation.
+`locals` - Plain JavaScript object passed to Pug for static compilation.
 
 `staticBasedir` - Brunch `convention.assets` folder as **string**. This is the root of static templates.
 
@@ -150,11 +150,11 @@ The options `pretty` and `compileDebug` are forced to `false` in production mode
 ```
 
 ```js
-  // later...
+  // your javascript...
   ...
   const tmpl = require('views/tmpl.html.pug')
   $('#elem').html(tmpl)
-  // now elem contains <p>John Doe</p>
+  // now #elem contains <p>John Doe</p>
 ```
 
 #### Static files
@@ -179,8 +179,7 @@ The options `pretty` and `compileDebug` are forced to `false` in production mode
       p= name
 ```
 
-will output a new file in public/user.html
-
+will output the new file public/user.html
 
 #### Using with [jscc-brunch](https://www.npmjs.com/package/jscc-brunch)
 

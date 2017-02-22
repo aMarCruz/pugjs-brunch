@@ -5,8 +5,6 @@ const genPugSourceMap = require('gen-pug-source-map')
 const sysPath = require('path')
 const pug = require('pug')
 
-//const PRECOMP = /\.static\.(?:jade|pug)$/
-
 // used pug options, note this list does not include 'name'
 const PUGPROPS = [
   'filename', 'basedir', 'doctype', 'pretty', 'filters', 'self',

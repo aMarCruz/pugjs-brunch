@@ -1,5 +1,10 @@
 # Changes for pugjs-brunch
 
+### 2017-02-02 v2.10.0
+- Using Pug v2.0.0-beta11.
+- Minor fixes to README.
+- Updated devDependencies.
+
 ### 2017-02-02 v2.9.0
 - Supports Brunch v2.9.x and v2.10.x
 - Using Pug v2.0.0-beta10 which fix some bugs and has better error reporting.
