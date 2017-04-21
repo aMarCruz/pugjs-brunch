@@ -46,7 +46,7 @@ class PugCompiler {
         doctype: 'html',
         basedir: defaultBasedir,
         staticBasedir: sysPath.join(defaultBasedir, 'assets'),
-        staticPretty: true,
+        staticPretty: !brunchConf.optimize,
         inlineRuntimeFunctions: false,
         compileDebug: !brunchConf.optimize,
         sourceMap: !!brunchConf.sourceMaps
