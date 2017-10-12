@@ -39,7 +39,6 @@ class PugCompiler {
   constructor (brunchConf) {
 
     const defaultBasedir = sysPath.join(brunchConf.paths.root, 'app')
-    debugger
 
     // shallow copy the options passed by the user mixed with defaults
     const config = Object.assign(
