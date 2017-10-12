@@ -1,5 +1,9 @@
 # Changes for pugjs-brunch
 
+### 2017-10-12 v2.10.1
+- Uses Pug v2.0.0-rc.4 or higher.
+- Adds `Promise` to predefined globals.
+
 ### 2017-02-02 v2.10.0
 - Using Pug v2.0.0-beta11.
 - Minor fixes to README.

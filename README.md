@@ -15,11 +15,8 @@ This plugin compiles templates into any of three types:
 
 **What's New**
 
-- Supports Brunch v2.9.x and v2.10.x
-- Using Pug v2.0.0-beta11.
-- New logic to load the custom runtime. It does not overwrite an existing "pug" object.
-- JS natives `String`, `Number`, `Boolean`, `Date`, `Array`, `Function`, `Math`, `RegExp`, and the scoped `require` are included in `globals[]`, in addition to your own names.
-- Requires node.js v4.2 or above.
+- Uses Pug v2.0.0-rc.4 or higher.
+- Adds `Promise` to predefined globals.
 
 See previous changes in the [CHANGELOG](https://github.com/aMarCruz/pugjs-brunch/blob/master/CHANGELOG.md).
 
@@ -34,7 +31,7 @@ or through `devDependencies` in `package.json`:
 
 ```js
     ...
-    "pugjs-brunch": "^2.10.0",
+    "pugjs-brunch": "^2.10.1",
 // or, if you want to use the git version of this plugin:
     "pugjs-brunch": "aMarCruz/pugjs-brunch",
     ...

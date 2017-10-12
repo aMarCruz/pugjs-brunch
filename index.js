@@ -8,7 +8,7 @@ const pug = require('pug')
 // used pug options, note this list does not include 'name'
 const PUGPROPS = [
   'filename', 'basedir', 'doctype', 'pretty', 'filters', 'self',
-  'debug', 'compileDebug', 'globals', 'inlineRuntimeFunctions'
+  'debug', 'compileDebug', 'globals', 'cache', 'inlineRuntimeFunctions'
 ]
 
 const dup = (src) => Object.assign({}, src)
@@ -39,6 +39,7 @@ class PugCompiler {
   constructor (brunchConf) {
 
     const defaultBasedir = sysPath.join(brunchConf.paths.root, 'app')
+    debugger
 
     // shallow copy the options passed by the user mixed with defaults
     const config = Object.assign(
@@ -54,8 +55,13 @@ class PugCompiler {
       brunchConf.plugins && brunchConf.plugins.pug
     )
 
+    // Maybe solves #4 (issues with auto-reload)
+    if (!config.staticOutdir) {
+      config.staticOutdir = config.staticBasedir
+    }
+
     // v2.8.7 add default globals to the user defined set
-    const globals = ['require', 'String', 'Number', 'Boolean', 'Date', 'Array', 'Function', 'Math', 'RegExp']
+    const globals = ['require', 'String', 'Number', 'Boolean', 'Date', 'Array', 'Function', 'Math', 'RegExp', 'Promise']
 
     if (config.globals) {
       config.globals.forEach(g => { if (globals.indexOf(g) < 0) globals.push(g) })
@@ -64,7 +70,10 @@ class PugCompiler {
 
     this.config = config
 
-    if (config.pattern) this.pattern = config.pattern
+    // Brunch looks for `pattern` in `this`
+    if (config.pattern) {
+      this.pattern = config.pattern
+    }
 
     // The runtime can be excluded by setting pugRuntime:false
     if ('noRuntime' in config) {
@@ -77,6 +86,7 @@ class PugCompiler {
       config.pugRuntime = false
     }
 
+    // Dependencies cache, auto-reload still not working in brunch v2.10.10
     this._depcache = []
   }
 
@@ -91,7 +101,7 @@ class PugCompiler {
       // conditions (hope in Windows as well).
       //
       let base = __dirname
-      if (base.indexOf('node_modules') < 0) {   // must be a symlink
+      if (base.indexOf('node_modules') < 0) {   // can be a symlink
         base = sysPath.resolve('node_modules', sysPath.basename(base))
       }
       runtime = sysPath.resolve(base, 'vendor', 'pug_runtime.js')
