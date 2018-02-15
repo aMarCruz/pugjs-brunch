@@ -36,7 +36,6 @@ coverage
 .tmproj
 nbproject
 .vscode
-jsconfig.json
 *.esproj
 *.komodoproject
 .komodotools
@@ -45,3 +44,5 @@ jsconfig.json
 *.sublime-workspace
 
 pug_runtime.js
+package-lock.json
+yarn.lock

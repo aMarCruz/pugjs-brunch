@@ -269,6 +269,31 @@ describe('dependencies', function () {
     }).catch(done)
   })
 
+  it('should output valid deps for assets', function (done) {
+    const filename = 'app/assets/deps.pug'
+    const content  = [
+      'html',
+      '  body',
+      '    include footer.pug',
+      ''
+    ].join('\n')
+    const expected = [
+      sysPath.join('app', 'assets', 'footer.pug'),
+    ]
+    const plugin = new Plugin(brunchOpts)
+
+    plugin.compileStatic({ data: content, path: filename }).then(function (data) {
+      if (typeof data != 'string') data = data.data
+      expect(data).toBeA('string')
+
+      plugin.getDependencies(content, filename, function (error, dependencies) {
+        expect(error).toNotExist()
+        expect(dependencies + '').toBe(expected + '')
+        done()
+      })
+    }).catch(done)
+  })
+
   it('dependency overwride should output valid deps', function (done) {
     const filename = 'custom/index.pug'
     const content  = fs.readFileSync(filename, 'utf8')

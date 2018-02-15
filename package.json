@@ -1,6 +1,6 @@
 {
   "name": "pugjs-brunch",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Adds Pug (aka Jade) support to brunch.",
   "author": "aMarCruz <amarcruzbox-git@yahoo.com>",
   "license": "MIT",

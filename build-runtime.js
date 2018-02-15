@@ -16,7 +16,7 @@ ${
   srcRuntime.replace(/^(?=[ \t]*\S)/gm, '  ') // indent
 }
 })(
-  typeof pug == 'object' && pug || typeof module == 'object' && module.exports || (this.pug = {})
+  typeof pug == 'object' && pug || typeof module == 'object' && module.exports || ((this || global).pug = {})
 );\n`
 
 // make sure the destination directory exists
