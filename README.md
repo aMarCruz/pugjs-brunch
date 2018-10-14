@@ -1,9 +1,9 @@
+# pugjs-brunch
+
 [![Windows build][wbuild-image]][wbuild-url]
 [![Build Status][build-image]][build-url]
 [![npm Version][npm-image]][npm-url]
 [![License][license-image]][license-url]
-
-## pugjs-brunch
 
 Adds [Pug](https://pugjs.org) v2.x (aka Jade) support to [Brunch](http://brunch.io)
 
@@ -13,13 +13,7 @@ This plugin compiles templates into any of three types:
 - Precompiled: Returns raw HTML string with minimum overhead at runtime.
 - Static: Plain HTML files from pug templates in the `assets` directory.
 
-**What's New**
-
-- Uses Pug v2.0.0-rc.4 or higher.
-- Adds `Promise` to predefined globals.
-
-See previous changes in the [CHANGELOG](https://github.com/aMarCruz/pugjs-brunch/blob/master/CHANGELOG.md).
-
+See the changes for this version in the [CHANGELOG](CHANGELOG.md).
 
 ## Install
 
@@ -30,11 +24,7 @@ npm install pugjs-brunch --save-dev
 or through `devDependencies` in `package.json`:
 
 ```js
-    ...
-    "pugjs-brunch": "^2.10.1",
-// or, if you want to use the git version of this plugin:
-    "pugjs-brunch": "aMarCruz/pugjs-brunch",
-    ...
+  "pugjs-brunch": "^2.11.0",
 ```
 
 To compile pug into static, plain HTML, just place your files into the assets directory (usually `app/assets`).
@@ -42,54 +32,60 @@ To compile pug into static, plain HTML, just place your files into the assets di
 
 ## The runtime
 
-For modules, unless the `inlineRuntimeFunctions` option is set to `true` (not recommended), it is neccesary the Pug runtime, a small set of function that lives in the *global* variable `pug`.
+For modules, unless the `inlineRuntimeFunctions` option is set to `true` (not recommended), it is neccesary the Pug runtime, a small set of functions that lives in the *global* variable `pug`.
 
-If required, the plugin loads a custom runtime from its own directory, so you don't have to worry about this.
+If required, the plugin loads a runtime from its own directory, so you don't have to worry about this.
 
 **NOTE:**
 
-Under certain circumstances the runtime load may fail. If this happens to you, move `pug_runtime.js` from `node_modules/pugjs-brunch/vendor` to your `vendor` folder and pass its fullname in the `pugRuntime` option to the plugin.
+Under certain circumstances the loading of the runtime may fail. If this happens to you, move `pug_runtime.js` from `node_modules/pugjs-brunch/vendor` to your `vendor` folder and load it in the global scope. Example:
 
-Example:
 ```js
+  // In your brunch config
   plugins: {
-    pug: { pugRuntime: require('path').resolve('.', 'vendor', 'pug_runtime.js') }
+    pug: { pugRuntime: false }
   }
 ```
 
+```html
+  <!-- in your index.html file -->
+  <script>
+    require('pug_runtime')
+    $(document).ready(function() {
+      require('app')
+    })
+  </script>
+```
+
+
 ## Options
 
-The plugin uses the `plugins.pug` section of your brunch-config and defines this options:
+The plugin uses the `plugins.pug` section of your brunch-config and defines this properties:
 
-`locals` - Plain JavaScript object passed to Pug for static compilation.
-
-`staticBasedir` - Brunch `convention.assets` folder as **string**. This is the root of static templates.
-
-`staticPretty` - Pug's `pretty` option for files in `staticBasedir` (v2.8.5).
-
-`preCompile` - When `true`, all the files will be pre-compiled.
-
-`preCompilePattern` - Regex: when `preCompile:true`, limit pre-compilation to matching files (v2.8.6).
-
-`pugRuntime` - Set to `false` if you want to load another runtime.
-
-`sourceMap` - Defaults to brunch `sourceMaps` (with 's') value, `false` disables it (v2.8.4).
+Name            | Type    | Default    | Notes
+--------------- | ------- | ---------- | -----------
+`locals`        | any     |            |  Plain JavaScript object passed to Pug for static compilation.
+`staticBasedir` | string  | (brunch)   | Brunch `convention.assets` folder as **string**. This is the root of static templates.
+`staticPretty`  | boolean | true       | Pug's `pretty` option for files in `staticBasedir` (v2.8.5).
+`preCompilePattern` | RegExp | /\.html\.pug$/ | pre-compile the templates matching this regex (v2.8.6).
+`pugRuntime`    | boolean | true       | Set to `false` if you want to load another runtime.
+`sourceMap`     | boolean | true       | Defaults to brunch `sourceMaps` (with 's') value, `false` disables it (v2.8.4).
 
 You can use any [Pug options](https://pugjs.org/api/reference.html) as well, pugjs-brunch set this:
 
 ```js
 {
   doctype: 'html',
-  basedir: 'app',                 // or wherever Brunch config says
-  staticBasedir: 'app/assets',    // basedir for static compilation (see bellow)
-  staticPretty: true,             // "pretty" for files in staticBasedir
-  inlineRuntimeFunctions: false,  // will use the global `pug` variable
-  compileDebug: true,             // except for brunch `optimize` mode (production)
-  sourceMap: true                 // ...if Brunch sourceMaps option is enabled
+  basedir: 'app',      // or wherever Brunch config says
+  compileDebug: true,  // false if brunch `optimize` mode is 'production'
 }
 ```
 
-### About `staticBasedir`:
+**TIP:**
+
+Use `preCompilePattern: /\S/` to evaluate all the templates at build time.
+
+### About `staticBasedir`
 
 This option is only meaningful if you changed the default value of `conventions.assets` in the Brunch config and you are using absolute paths in includes or extends. This value will be pass to Pug as `basedir` when compiling static assets as html (see the [pug options](https://pugjs.org/api/reference.html#options)).
 
@@ -101,15 +97,13 @@ The options `pretty` and `compileDebug` are forced to `false` in production mode
 
 ## Examples
 
-#### Dynamic templates (Regular usage)
+### Dynamic templates
 
 ```js
   // brunch-config.js
   ...
   plugins: {
-    pug: {
-      globals: ['App']
-    }
+    pug: {}
   },
 ```
 
@@ -119,15 +113,14 @@ The options `pretty` and `compileDebug` are forced to `false` in production mode
 ```
 
 ```js
-  // later...
-  App.userName = 'John Doe'
+  // in the js code
   ...
-  const tmpl = require('views/tmpl.pug')
-  $('#elem').html(tmpl({ name: App.userName }))
-  // now elem contains <p>John Doe</p>
+  const tmplFn = require('views/tmpl.pug')
+  $('#elem').html(tmplFn({ name: 'John Doe' }))
+  // now #elem contains <p>John Doe</p>
 ```
 
-#### Selective precompilation
+### Precompilation
 
 ```js
   // brunch-config.js
@@ -135,7 +128,6 @@ The options `pretty` and `compileDebug` are forced to `false` in production mode
   plugins: {
     pug: {
       locals: { name: 'John Doe' },
-      preCompile: true,
       preCompilePattern: /\.html\.pug$/
     }
   },
@@ -147,14 +139,14 @@ The options `pretty` and `compileDebug` are forced to `false` in production mode
 ```
 
 ```js
-  // your javascript...
+  // in the js code
   ...
-  const tmpl = require('views/tmpl.html.pug')
-  $('#elem').html(tmpl)
+  const htmlStr = require('views/tmpl.html.pug')
+  $('#elem').html(htmlStr)
   // now #elem contains <p>John Doe</p>
 ```
 
-#### Static files
+### Static files
 
 ```js
   // brunch-config.js
@@ -176,9 +168,9 @@ The options `pretty` and `compileDebug` are forced to `false` in production mode
       p= name
 ```
 
-will output the new file public/user.html
+will create the file ./public/user.html
 
-#### Using with [jscc-brunch](https://www.npmjs.com/package/jscc-brunch)
+### Using with [jscc-brunch](https://www.npmjs.com/package/jscc-brunch)
 
 ```js
   ...

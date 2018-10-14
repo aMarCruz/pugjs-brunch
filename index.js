@@ -1,98 +1,41 @@
+/// <reference path="./utils/types.d.ts" />
 'use strict'
 
 const flattenBrunchMap = require('flatten-brunch-map')
 const genPugSourceMap = require('gen-pug-source-map')
 const sysPath = require('path')
 const pug = require('pug')
+const clonePugOpts = require('./utils/clonePugOpts')
+const deepClone = require('./utils/deepClone')
+const parseOptions = require('./utils/parseOptions')
 
-// used pug options, note this list does not include 'name'
-const PUGPROPS = [
-  'filename', 'basedir', 'doctype', 'pretty', 'filters', 'self',
-  'debug', 'compileDebug', 'globals', 'cache', 'inlineRuntimeFunctions'
-]
-
+/**
+ * @template T
+ * @param {T} src - Object to clone
+ */
 const dup = (src) => Object.assign({}, src)
 
-// perform a deep cloning of an object
-function clone (obj) {
-  if (obj == null || typeof obj != 'object') return obj
-  const copy = obj.constructor()
-  for (const attr in obj) {
-    if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr])
-  }
-  return copy
-}
-
-function cloneProps (src, list) {
-  return list.reduce((o, p) => {
-    if (p in src) o[p] = clone(src[p])
-    return o
-  }, {})
-}
-
 /*
-    THE PLUGIN
+  THE PLUGIN
 */
 
 class PugCompiler {
 
   constructor (brunchConf) {
 
-    const defaultBasedir = sysPath.join(brunchConf.paths.root, 'app')
-
     // shallow copy the options passed by the user mixed with defaults
-    const config = Object.assign(
-      {
-        doctype: 'html',
-        basedir: defaultBasedir,
-        staticBasedir: sysPath.join(defaultBasedir, 'assets'),
-        staticPretty: true,
-        inlineRuntimeFunctions: false,
-        compileDebug: !brunchConf.optimize,
-        sourceMap: !!brunchConf.sourceMaps
-      },
-      brunchConf.plugins && brunchConf.plugins.pug
-    )
-
-    // Maybe solves #4 (issues with auto-reload)
-    if (!config.staticOutdir) {
-      config.staticOutdir = config.staticBasedir
-    }
-
-    // v2.8.7 add default globals to the user defined set
-    const globals = ['require', 'String', 'Number', 'Boolean', 'Date', 'Array', 'Function', 'Math', 'RegExp', 'Promise']
-
-    if (config.globals) {
-      config.globals.forEach(g => { if (globals.indexOf(g) < 0) globals.push(g) })
-    }
-    config.globals = globals
+    const config = parseOptions(brunchConf)
 
     this.config = config
 
-    // Brunch looks for `pattern` in `this`
-    if (config.pattern) {
-      this.pattern = config.pattern
-    }
-
-    // The runtime can be excluded by setting pugRuntime:false
-    if ('noRuntime' in config) {
-      // eslint-disable-next-line no-console
-      console.error('pugjs-brunch: `noRuntime` is DEPRECATED, please use `pugRuntime:false`')
-      if (config.noRuntime) config.pugRuntime = false
-    }
-
-    if (config.preCompile && !config.preCompilePattern || config.inlineRuntimeFunctions) {
-      config.pugRuntime = false
-    }
-
     // Dependencies cache, auto-reload still not working in brunch v2.10.10
-    this._depcache = []
+    /** @type {{ [k:string]: string[] }} */
+    this._depcache = {}
   }
 
   get include () {
-    let runtime = this.config.pugRuntime
 
-    if (runtime !== false && !(runtime && typeof runtime == 'string')) {
+    if (this.config.pugRuntime) {
       //
       // Ok this is not pretty, but seems to work with brunch 2.9.x and 2.10.x
       // node returns the real path of sym-linked modules so brunch can wrap
@@ -103,39 +46,39 @@ class PugCompiler {
       if (base.indexOf('node_modules') < 0) {   // can be a symlink
         base = sysPath.resolve('node_modules', sysPath.basename(base))
       }
-      runtime = sysPath.resolve(base, 'vendor', 'pug_runtime.js')
+
+      return [sysPath.resolve(base, 'vendor', 'pug_runtime.js')]
     }
-    return runtime ? [runtime] : []
+
+    return []
   }
 
   getDependencies (data, path, cb) {
-    const deps = path in this._depcache && this._depcache[path] || []
-    return cb(null, deps)
+    return cb(null, this._depcache[path] || [])
   }
 
+  /**
+   * Dynamic compilation or html precompilation
+   * @param {{data: string, path: string}} params - Brunch params
+   */
   compile (params) {
-    const data = params.data
-    const path = params.path
+    const { data, path } = params
+    const config = this.config
 
-    if (this.config.preCompile &&
-      (!this.config.preCompilePattern || this.config.preCompilePattern.test(path))
-     ) {
-      return this._precompile(
-        data,
-        path,
-        this.config
-      )
+    if (config.preCompilePattern && config.preCompilePattern.test(path)) {
+      return this._precompile(data, path, config)
     }
 
     return new Promise((resolve, reject) => {
 
       // cloning options is mandatory because Pug changes it
-      const options = cloneProps(this.config, PUGPROPS)
-      options.filename = path
+      const options = clonePugOpts(config, path)
 
       try {
         const dbg = options.compileDebug
-        if (this.config.sourceMap) options.compileDebug = true
+        if (config.sourceMap) {
+          options.compileDebug = true
+        }
 
         const res = pug.compileClientWithDependenciesTracked(data, options)
         this._setDeps(path, res)
@@ -143,11 +86,11 @@ class PugCompiler {
         let result = this._export(path, res.body)
 
         if (this.config.sourceMap) {
-          const duple = genPugSourceMap(path, result, {
+          const bundle = genPugSourceMap(path, result, {
             basedir: options.basedir,
-            keepDebugLines: dbg
+            keepDebugLines: dbg,
           })
-          result = flattenBrunchMap(params, duple.data, duple.map)
+          result = flattenBrunchMap(params, bundle.data, bundle.map)
         }
 
         resolve(result)
@@ -168,9 +111,16 @@ class PugCompiler {
     )
   }
 
+  /**
+   * Precompilation
+   * @param {string} data Template code
+   * @param {string} path Template path
+   * @param {PugPluginOpts} config User config
+   * @param {boolean} [asset] Is this an html file
+   */
   _precompile (data, path, config, asset) {
     const locals  = dup(config.locals)
-    const options = cloneProps(config, PUGPROPS)
+    const options = clonePugOpts(config, path)
 
     // by no inlining functions, pug uses own `require('pug-runtime')`
     options.inlineRuntimeFunctions = false
@@ -203,15 +153,45 @@ class PugCompiler {
     })
   }
 
+  /**
+   * Register dependencies of template
+   * @param {string} path Main template
+   * @param {Function & {dependencies?: string[]}} res Template dependencies
+   */
   _setDeps (path, res) {
     const src = res.dependencies
+
     if (src && src.length) {
+      /** @type {string[]} */
       const deps = []
-      src.forEach(dep => { if (deps.indexOf(dep) < 0) deps.push(dep) })
+
+      // map path -> dependencies
+      src.forEach((dep) => {
+        if (deps.indexOf(dep) < 0) {
+          deps.push(dep)
+        }
+      })
       this._depcache[path] = deps
+
+      // map dependencies -> path
+      deps.forEach((dep) => {
+        const cache = this._depcache[dep]
+        if (cache) {
+          if (cache.indexOf(dep) < 0) {
+            cache.push(path)
+          }
+        } else {
+          this._depcache[dep] = [path]
+        }
+      })
     }
   }
 
+  /**
+   * Export the template as a module
+   * @param {string} path File path
+   * @param {string} tmpl JS function
+   */
   _export (path, tmpl) {
     return path === null ? `module.exports = ${tmpl};\n` : `${tmpl};\nmodule.exports = template;\n`
   }
@@ -221,6 +201,7 @@ class PugCompiler {
 PugCompiler.prototype.brunchPlugin = true
 PugCompiler.prototype.type = 'template'
 PugCompiler.prototype.pattern = /\.(?:pug|jade)$/
+PugCompiler.prototype.targetExtension = 'js'
 PugCompiler.prototype.staticTargetExtension = 'html'
 
 module.exports = PugCompiler

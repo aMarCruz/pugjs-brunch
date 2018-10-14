@@ -1,9 +1,12 @@
 {
 	// See https://go.microsoft.com/fwlink/?LinkId=759670
 	"compilerOptions": {
+		"checkJs": true,
 		"target": "es6",
 		"module": "commonjs",
-		"allowSyntheticDefaultImports": true
+		"allowSyntheticDefaultImports": true,
+		"moduleResolution": "node",
+		"lib": ["es2017"],
 	},
 	"exclude": [
 		"node_modules",
