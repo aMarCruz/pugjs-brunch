@@ -33,7 +33,7 @@
   "dependencies": {
     "@types/node": "^10.11.7",
     "flatten-brunch-map": "^2.10.0",
-    "gen-pug-source-map": "^0.1.2",
+    "gen-pug-source-map": "^1.0.0",
     "pug": "^2.0.0",
     "pug-runtime": "^2.0.3"
   },
