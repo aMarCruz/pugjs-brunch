@@ -6,6 +6,7 @@
 
 ### Changed
 - The `pugRuntime` option only accepts a boolean value.
+- Update node versions for CI
 
 ### Removed
 - Unused `cache` property
