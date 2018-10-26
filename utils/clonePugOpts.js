@@ -14,9 +14,9 @@ const PUGPROPS = [
 ]
 
 /**
- * @param {import('./typings').PugPluginOpts} src
+ * @param {PugPluginOpts} src
  * @param {string} filename
- * @returns {import('./typings').PugOwnOpts}
+ * @returns {PugOwnOpts}
  */
 module.exports = (src, filename) => PUGPROPS.reduce((o, p) => {
   if (p in src) {

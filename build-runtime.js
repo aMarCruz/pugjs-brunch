@@ -21,7 +21,9 @@ ${
 
 // make sure the destination directory exists
 const dest = path.join(__dirname, 'vendor')
-if (!fs.existsSync(dest)) fs.mkdirSync(dest)
+if (!fs.existsSync(dest)) {
+  fs.mkdirSync(dest)
+}
 
 // write our custom runtime
 const destFile = path.join(dest, 'pug_runtime.js')

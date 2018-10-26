@@ -12,7 +12,7 @@ const deepClone = (obj) => {
   }
   const copy = obj.constructor()
   for (const attr in obj) {
-    if (hasOwnProperty.call(attr)) {
+    if (hasOwnProperty.call(obj, attr)) {
       copy[attr] = deepClone(obj[attr])
     }
   }

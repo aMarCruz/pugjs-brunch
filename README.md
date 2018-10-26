@@ -1,8 +1,8 @@
 # pugjs-brunch
 
+[![npm Version][npm-image]][npm-url]
 [![Windows build][wbuild-image]][wbuild-url]
 [![Build Status][build-image]][build-url]
-[![npm Version][npm-image]][npm-url]
 [![License][license-image]][license-url]
 
 Adds [Pug](https://pugjs.org) v2.x (aka Jade) support to [Brunch](http://brunch.io)
@@ -66,10 +66,14 @@ Name            | Type    | Default    | Notes
 --------------- | ------- | ---------- | -----------
 `locals`        | any     |            |  Plain JavaScript object passed to Pug for static compilation.
 `staticBasedir` | string  | (brunch)   | Brunch `convention.assets` folder as **string**. This is the root of static templates.
-`staticPretty`  | boolean | true       | Pug's `pretty` option for files in `staticBasedir` (v2.8.5).
+`staticPretty`  | boolean | true       | Pug's `pretty` option for files in `staticBasedir`, see NOTE (v2.8.5).
 `preCompilePattern` | RegExp | /\.html\.pug$/ | pre-compile the templates matching this regex (v2.8.6).
 `pugRuntime`    | boolean | true       | Set to `false` if you want to load another runtime.
 `sourceMap`     | boolean | true       | Defaults to brunch `sourceMaps` (with 's') value, `false` disables it (v2.8.4).
+
+### Note
+
+From v2.11.1 `staticPretty` is set to `false` for production builds. Thanks to @stawberri
 
 You can use any [Pug options](https://pugjs.org/api/reference.html) as well, pugjs-brunch set this:
 
@@ -190,6 +194,17 @@ will create the file ./public/user.html
   ...
 ```
 
+## Support my Work
+
+I'm a full-stack developer with more than 20 year of experience and I try to share most of my work for free and help others, but this takes a significant amount of time and effort so, if you like my work, please consider...
+
+[![Buy Me a Coffee][bmc-image]][bmc-url]
+
+Of course, feedback, PRs stars, and smiles are also welcome :)
+
+Thanks for your support!
+
+
 ## License
 
 The [MIT License](LICENCE) (MIT)
@@ -198,8 +213,9 @@ The [MIT License](LICENCE) (MIT)
 [npm-url]:        https://www.npmjs.com/package/pugjs-brunch
 [license-image]:  https://img.shields.io/npm/l/express.svg
 [license-url]:    https://github.com/aMarCruz/pugjs-brunch/blob/master/LICENSE
-
 [build-image]:    https://img.shields.io/travis/aMarCruz/pugjs-brunch.svg
 [build-url]:      https://travis-ci.org/aMarCruz/pugjs-brunch
 [wbuild-image]:   https://ci.appveyor.com/api/projects/status/3www03fp83018461?svg=true
 [wbuild-url]:     https://ci.appveyor.com/project/aMarCruz/pugjs-brunch
+[bmc-image]:      https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png
+[bmc-url]:        https://www.buymeacoffee.com/aMarCruz

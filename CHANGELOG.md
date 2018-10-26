@@ -1,5 +1,12 @@
 # Changes for pugjs-brunch
 
+## [2.11.1] - 2018-10-26
+### Fixed
+- Error in the cloning of options.
+
+### Changed
+- `staticPretty`'s default configuration if set to `false` for production builds. Thanks to @stawberri
+
 ## [2.11.0] - 2018-10-14
 ### Added
 - `Object` and `Symbol` to prdefined globals.
