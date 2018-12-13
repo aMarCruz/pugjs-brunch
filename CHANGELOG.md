@@ -2,11 +2,16 @@
 
 ## \[2.11.2] - 2018-12-13
 
+### Added
+
+- Map, Set, WeakMap, WeakSet to globals.
+
 ### Changed
 
 - Fix issues with linters.
 - Updated licence year.
 - Updated dependencies.
+- Clarify error messages for wrong options.
 
 ## \[2.11.1] - 2018-10-26
 

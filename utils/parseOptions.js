@@ -27,10 +27,10 @@ module.exports = (brunchConf) => {
   )
 
   if ('preCompile' in config) {
-    throw new Error('[plugin-pug] The `preCompile` option was removed in this version, please see the README.')
+    throw new Error(': The `preCompile` option of pugjs-brunch was removed, please use only `preCompilePattern`.')
   }
   if (typeof config.pugRuntime == 'string') {
-    throw new Error('[plugin-pug] The `pugRuntime` option must be a boolean, please see the README.')
+    throw new Error(': The `pugRuntime` option of pugjs-brunch must be a boolean value.')
   }
 
   // The runtime can be excluded by setting pugRuntime:false
@@ -42,19 +42,24 @@ module.exports = (brunchConf) => {
 
   // v2.8.7 add default globals to the user defined set
   // v2.11.0 add Object & Symbol to globals
+  // v2.12.0 add Map, Set, WeakMap, WeakSet to globals
   const globals = [
     'require',
     'Array',
     'Boolean',
     'Date',
     'Function',
+    'Map',
     'Math',
     'Number',
     'Object',
     'Promise',
     'RegExp',
+    'Set',
     'String',
     'Symbol',
+    'WeakMap',
+    'WeakSet',
   ]
 
   if (config.globals) {
