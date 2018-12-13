@@ -1,4 +1,4 @@
-const deepClone = require('./deepClone')
+const deepClone = require('@jsbits/deep-clone')
 
 // used pug options, note this list does not include 'name' nor `filename`
 const PUGPROPS = [

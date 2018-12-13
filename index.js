@@ -6,14 +6,8 @@ const genPugSourceMap = require('gen-pug-source-map')
 const sysPath = require('path')
 const pug = require('pug')
 const clonePugOpts = require('./utils/clonePugOpts')
-const deepClone = require('./utils/deepClone')
+const deepClone = require('@jsbits/deep-clone')
 const parseOptions = require('./utils/parseOptions')
-
-/**
- * @template T
- * @param {T} src - Object to clone
- */
-const dup = (src) => Object.assign({}, src)
 
 /*
   THE PLUGIN
@@ -119,7 +113,7 @@ class PugCompiler {
    * @param {boolean} [asset] Is this an html file
    */
   _precompile (data, path, config, asset) {
-    const locals  = dup(config.locals)
+    const locals  = deepClone(config.locals)
     const options = clonePugOpts(config, path)
 
     // by no inlining functions, pug uses own `require('pug-runtime')`
