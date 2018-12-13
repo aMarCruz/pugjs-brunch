@@ -29,7 +29,6 @@ or through `devDependencies` in `package.json`:
 
 To compile pug into static, plain HTML, just place your files into the assets directory (usually `app/assets`).
 
-
 ## The runtime
 
 For modules, unless the `inlineRuntimeFunctions` option is set to `true` (not recommended), it is neccesary the Pug runtime, a small set of functions that lives in the *global* variable `pug`.
@@ -56,7 +55,6 @@ Under certain circumstances the loading of the runtime may fail. If this happens
     })
   </script>
 ```
-
 
 ## Options
 
@@ -93,11 +91,9 @@ Use `preCompilePattern: /\S/` to evaluate all the templates at build time.
 
 This option is only meaningful if you changed the default value of `conventions.assets` in the Brunch config and you are using absolute paths in includes or extends. This value will be pass to Pug as `basedir` when compiling static assets as html (see the [pug options](https://pugjs.org/api/reference.html#options)).
 
-
-**NOTE**
+**NOTE:**
 
 The options `pretty` and `compileDebug` are forced to `false` in production mode.
-
 
 ## Examples
 
@@ -198,12 +194,13 @@ will create the file ./public/user.html
 
 I'm a full-stack developer with more than 20 year of experience and I try to share most of my work for free and help others, but this takes a significant amount of time and effort so, if you like my work, please consider...
 
-[![Buy Me a Coffee][bmc-image]][bmc-url]
+<!-- markdownlint-disable MD033 -->
+[<img src="https://amarcruz.github.io/images/kofi_blue.png" height="36" title="Support Me on Ko-fi" />][kofi-url]
+<!-- markdownlint-enable MD033 -->
 
-Of course, feedback, PRs stars, and smiles are also welcome :)
+Of course, feedback, PRs, and stars are also welcome 🙃
 
 Thanks for your support!
-
 
 ## License
 
@@ -217,5 +214,4 @@ The [MIT License](LICENCE) (MIT)
 [build-url]:      https://travis-ci.org/aMarCruz/pugjs-brunch
 [wbuild-image]:   https://ci.appveyor.com/api/projects/status/3www03fp83018461?svg=true
 [wbuild-url]:     https://ci.appveyor.com/project/aMarCruz/pugjs-brunch
-[bmc-image]:      https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png
-[bmc-url]:        https://www.buymeacoffee.com/aMarCruz
+[kofi-url]:       https://ko-fi.com/C0C7LF7I
