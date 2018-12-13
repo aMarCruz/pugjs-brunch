@@ -1,0 +1,14 @@
+._*
+.nyc_output/
+.vscode/
+*.bak
+/*.json
+*.lock
+*.log
+*.tgz
+*.yml
+~*
+coverage/
+Makefile
+spec/
+test/
