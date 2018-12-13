@@ -19,12 +19,14 @@ See the changes for this version in the [CHANGELOG](CHANGELOG.md).
 
 ```bash
 npm install pugjs-brunch --save-dev
+# or
+yarn add pugjs-brunch -D
 ```
 
 or through `devDependencies` in `package.json`:
 
 ```js
-  "pugjs-brunch": "^2.11.0",
+  "pugjs-brunch": "^2.11.2",
 ```
 
 To compile pug into static, plain HTML, just place your files into the assets directory (usually `app/assets`).

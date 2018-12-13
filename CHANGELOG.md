@@ -12,6 +12,7 @@
 - Updated licence year.
 - Updated dependencies.
 - Clarify error messages for wrong options.
+- Replaced deepClone.js with the @jsbits/deep-clone package.
 
 ## \[2.11.1] - 2018-10-26
 

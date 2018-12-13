@@ -1,12 +1,13 @@
 /// <reference path="./utils/types.d.ts" />
 'use strict'
 
+const deepClone = require('@jsbits/deep-clone')
 const flattenBrunchMap = require('flatten-brunch-map')
 const genPugSourceMap = require('gen-pug-source-map')
-const sysPath = require('path')
 const pug = require('pug')
+const sysPath = require('path')
+
 const clonePugOpts = require('./utils/clonePugOpts')
-const deepClone = require('@jsbits/deep-clone')
 const parseOptions = require('./utils/parseOptions')
 
 /*
