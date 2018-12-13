@@ -206,6 +206,8 @@ Thanks for your support!
 
 The [MIT License](LICENCE) (MIT)
 
+&copy; 2016-2018 Alberto Martínez
+
 [npm-image]:      https://img.shields.io/npm/v/pugjs-brunch.svg
 [npm-url]:        https://www.npmjs.com/package/pugjs-brunch
 [license-image]:  https://img.shields.io/npm/l/express.svg

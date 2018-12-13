@@ -1,5 +1,13 @@
 # Changes for pugjs-brunch
 
+## \[2.11.2] - 2018-12-13
+
+### Changed
+
+- Fix issues with linters.
+- Updated licence year.
+- Updated dependencies.
+
 ## \[2.11.1] - 2018-10-26
 
 ### Fixed
