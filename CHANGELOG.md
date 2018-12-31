@@ -1,5 +1,11 @@
 # Changes for pugjs-brunch
 
+## \[2.11.3] - 2018-12-31
+
+### Fixed
+
+- #10 dependency to @jsbits/deep-clone, thanks @physikerwelt
+
 ## \[2.11.2] - 2018-12-13
 
 ### Added
